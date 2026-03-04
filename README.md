@@ -36,7 +36,7 @@ Each service is organized into a standardized bundle format to ensure portabilit
 ```text
 Service.serviced/
 └── Contents/
-    ├── MacOS/           # Compiled Go binaries
+    ├── FBOS/           # Compiled Go binaries
     ├── Resources/       # Service-specific assets or caches
     ├── Info.json        # Metadata, dependencies, and launch constraints
     └── Entitlements.json # Security definitions (Capabilities, IPC access)
