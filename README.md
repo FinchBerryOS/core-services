@@ -1,42 +1,57 @@
-# FinchBerryOS Core Services
+# FinchBerryOS Core Services & Launch Infrastructure
 
-Welcome to the central nervous system of **FinchBerryOS**. This repository contains the essential system daemons that power the operating system's low-level logic, hardware orchestration, and state management.
+Welcome to the central nervous system of **FinchBerryOS**. This repository manages the system binaries, high-level service bundles, and the launch configurations that orchestrate the transition from the Linux kernel to a fully functional, sovereign userland.
 
-Inspired by the robust architecture of Darwin/macOS but engineered for the modern Linux kernel, these services replace traditional monolithic init systems with a modular, entitlement-aware service mesh built in **Go**.
+## 🏗 Service Hierarchy & Architecture
 
-## 🏗 Architecture Overview
+FinchBerryOS employs a tiered architectural approach to separate critical boot logic from high-level system services and UI components.
 
-FinchBerryOS services are delivered as **`.serviced`** bundles. This approach ensures strict isolation and provides a clear separation between system logic and graphical applications (`.appd`).
+### 1. The Boot & Core Layer (Naked Binaries)
+Essential system components located in traditional Unix paths. These are "naked" binaries without bundled resources.
+* **`/sbin/syscored`**: The heart of the OS (PID 1). Managed directly by the kernel.
+* **`/usr/sysbin/`**: Core system daemons providing base functionality (e.g., `configd`, `networkd`).
 
-### Design Principles:
-* **XPC-First Communication:** All services communicate via structured, type-safe XPC (Cross-Process Communication) managed by `syscored`.
-* **The "Udev-Whisperer" Model:** Hardware events are parsed once by `kmodsysd` and broadcasted system-wide.
-* **Entitlement-Based Security:** Services are sandboxed. For instance, core system daemons (except for the WindowServer) are strictly forbidden from accessing the GPU.
+### 2. The High-Level Layer (Bundles)
+Located in `/System/Library/CoreServices`, this layer contains complex services packaged as bundles to include resources, localized strings, and metadata.
+* **`.serviceb` (Service Bundles)**: Integrated background services with resource requirements (e.g., `Bluetooth.serviceb`).
+* **`.appb` (App Bundles)**: Critical system-level UI applications (e.g., `WindowServer.appb`, `LoginUI.appb`).
 
----
-
-## 🛰 The Core Daemons
-
-| Service Bundle | Role | Key Responsibility |
-| :--- | :--- | :--- |
-| **`syscored.serviced`** | **The Heart** | The Init system (PID 1). Manages service lifecycles and acts as the XPC message broker. |
-| **`configd.serviced`** | **The Secretary** | Maintains the `SCDynamicStore`. The single source of truth for system state (IPs, Power, Users). |
-| **`kmodsysd.serviced`** | **The Mechanic** | The Udev whisperer. Handles hardware identification, driver loading (`libkmod`), and the I/O Registry. |
-| **`diskarbitrationd.serviced`** | **The Porter** | Manages storage devices. Handles mounting, file system integrity, and disk events. |
-| **`networkd.serviced`** | **The Diplomat** | Executes network logic. Manages Wi-Fi, DHCP, WireGuard tunnels, and Bitcoin P2P backgrounding. |
-| **`securityd.serviced`** | **The Vault** | The guardian of secrets. Manages Keychains, cryptographic operations, and TLS certificates. |
-| **`logd.serviced`** | **The Memory** | The high-performance unified logging engine for the entire OS. |
+### 3. Launch Configurations
+`syscored` scans these directories to manage the lifecycle, dependencies, and entitlements of all services.
+* **`/System/Library/LaunchDaemons/` & `LaunchAgents/`**: Immutable system service definitions.
+* **`/Library/LaunchDaemons/` & `LaunchAgents/`**: Administrator or third-party service definitions.
 
 ---
 
-## 📦 Bundle Structure
+## 🛰 The Core Service Map
 
-Each service is organized into a standardized bundle format to ensure portability and atomic updates:
+| Location | Binary/Bundle | Role | Responsibility |
+| :--- | :--- | :--- | :--- |
+| **`/sbin/`** | `syscored` | **PID 1 / Heart** | Init system, service supervisor, and XPC Broker. |
+| **`/usr/sysbin/`** | `configd` | **Daemon** | Maintains the `SCDynamicStore` (System state). |
+| **`/usr/sysbin/`** | `networkd` | **Daemon** | Networking stack, WireGuard, and IP management. |
+| **`/usr/sysbin/`** | `kmodsysd` | **Daemon** | Hardware registry and kernel module orchestration. |
+
+---
+
+## 📂 Filesystem Structure
 
 ```text
-Service.serviced/
-└── Contents/
-    ├── FBOS/           # Compiled Go binaries
-    ├── Resources/       # Service-specific assets or caches
-    ├── Info.json        # Metadata, dependencies, and launch constraints
-    └── Entitlements.json # Security definitions (Capabilities, IPC access)
+/
+├── sbin/
+│   └── syscored               # Kernel-invoked Init process
+├── usr/
+│   └── sysbin/                # Core "Naked" Daemons
+│       ├── configd
+│       ├── networkd
+│       └── logd
+├── System/
+│   └── Library/
+│       ├── CoreServices/      # High-Level Bundles (.serviceb, .appb)
+│       │   ├── Bluetooth.serviceb
+│       │   └── WindowServer.appb
+│       ├── LaunchDaemons/     # System service configurations
+│       └── LaunchAgents/      # System user-agent configurations
+└── Library/
+    ├── LaunchDaemons/         # Third-party service configurations
+    └── LaunchAgents/          # Third-party user-agent configurations
