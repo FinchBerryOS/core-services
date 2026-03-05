@@ -30,6 +30,8 @@ Located in `/System/Library/CoreServices`, this layer contains complex services 
 | **`/sbin/`** | `syscored` | **PID 1 / Heart** | Init system, service supervisor, and LXPC Broker. |
 | **`/usr/libexec/`** | `authd` | **Daemon** | Authorization, session tokens, and entitlement checks. |
 | **`/usr/libexec/`** | `configd` | **Daemon** | Maintains the System Registry and A/B-state logic. |
+| **`/usr/libexec/`** | `notifyd` | **Daemon** | System-wide event notification and status signaling. |
+| **`/usr/libexec/`** | `powerd` | **Daemon** | Power management, thermal monitoring, and shutdown policy. |
 | **`/usr/libexec/`** | `identityd` | **Daemon** | User database, group memberships, and role resolution. |
 | **`/usr/libexec/`** | `dnsd` | **Daemon** | Sovereign DNS (DoH/DoT) and system-wide caching. |
 | **`/usr/libexec/`** | `linuxcontainerd` | **Daemon** | Namespace orchestration and cgroup resource limits. |
@@ -53,6 +55,8 @@ Located in `/System/Library/CoreServices`, this layer contains complex services 
 │   └── libexec/               # The "Engine Room" (Core Daemons)
 │       ├── authd              # Authorization & Entitlements
 │       ├── configd            # System Configuration & Registry
+│       ├── notifyd            # Event Notification Center
+│       ├── powerd             # Power & Shutdown Management
 │       ├── diskarbitrationd   # Disk & Mount Management
 │       ├── dnsd               # Encrypted DNS Resolver
 │       ├── identityd          # User & Identity Management
@@ -66,6 +70,7 @@ Located in `/System/Library/CoreServices`, this layer contains complex services 
 │   └── Library/
 │       ├── CoreServices/      # High-Level Bundles (.serviceb, .appb)
 │       │   ├── Bluetooth.serviceb
+│       │   ├── LoginUI.appb
 │       │   └── WindowServer.appb
 │       ├── LaunchDaemons/     # System service configurations
 │       └── LaunchAgents/      # System user-agent configurations
