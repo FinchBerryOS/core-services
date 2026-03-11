@@ -21,7 +21,7 @@ tracing = "0.1"
 # -------------------------------------------------------------------
 # LXPC DIREKT VON DER FINCHBERRYOS QUELLE LADEN
 # -------------------------------------------------------------------
-lxpc = { git = "https://github.com/FinchBerryOS/liblxpc.git" }
+lxpc = { git = "https://github.com/FinchBerryOS/liblxpc.git", tag = "v1.0.0" }
 
 # WICHTIG: Damit tracing (info!, error!) auch wirklich Text ausgibt,
 # brauchen wir den Subscriber. Füge ihn am besten direkt mit hinzu:
