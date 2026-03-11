@@ -1,0 +1,28 @@
+[package]
+name = "syscored"
+version = "0.1.0"
+edition = "2024"
+description = "FinchBerryOS Core Daemon"
+
+[dependencies]
+# Unix System-Aufrufe 
+nix = { version = "0.28", features = ["signal", "signalfd", "socket", "unistd", "wait"] }
+
+# Konfiguration und Serialisierung (.toml)
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+
+# CBOR-Decoder für LXPC
+ciborium = "0.2"
+
+# Logging-Fassade
+tracing = "0.1"
+
+# -------------------------------------------------------------------
+# LXPC DIREKT VON DER FINCHBERRYOS QUELLE LADEN
+# -------------------------------------------------------------------
+lxpc = { git = "https://github.com/FinchBerryOS/liblxpc.git" }
+
+# WICHTIG: Damit tracing (info!, error!) auch wirklich Text ausgibt,
+# brauchen wir den Subscriber. Füge ihn am besten direkt mit hinzu:
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
