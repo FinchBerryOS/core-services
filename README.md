@@ -1,5 +1,9 @@
 # FinchBerryOS Core Services & Launch Infrastructure
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/FinchBerryOS/.github/refs/heads/main/profile/assets/CoreServices_github.png" alt="FinchBerryOS Logo" width="400">
+</p>
+
 Welcome to the central nervous system of **FinchBerryOS**. This repository manages the system binaries, high-level service bundles, and the launch configurations that orchestrate the transition from the Linux kernel to a fully functional, sovereign userland.
 
 ## 🏗 Service Hierarchy & Architecture
